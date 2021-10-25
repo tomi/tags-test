@@ -25,12 +25,12 @@ jobs:
 
       - name: 📜 List commits since last deploy
         run: |
-          echo "ref: ${{ github.event.push.ref }}"
-          echo "before: ${{ github.event.push.before }}"
-          echo "after: ${{ github.event.push.after }}"
-          echo "created: ${{ github.event.push.created }}"
-          echo "deleted: ${{ github.event.push.deleted }}"
-          echo "forced: ${{ github.event.push.forced }}"
-          echo "head_commit: ${{ github.event.push.head_commit }}"
-          echo "compare: ${{ github.event.push.compare }}"
-          echo "commits: ${{ github.event.push.commits }}"
+          echo "ref: ${{ github.event.ref }}"
+          echo "before: ${{ github.event.before }}"
+          echo "after: ${{ github.event.after }}"
+          echo "created: ${{ github.event.created }}"
+          echo "deleted: ${{ github.event.deleted }}"
+          echo "forced: ${{ github.event.forced }}"
+          echo "head_commit: ${{ github.event.head_commit }}"
+          echo "compare: ${{ github.event.compare }}"
+          echo "commits: ${{ github.event.commits }}"
