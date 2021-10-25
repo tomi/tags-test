@@ -1,0 +1,36 @@
+name: Test tags
+
+on:
+  push:
+    tags: ["prod"]
+  workflow_dispatch:
+
+env:
+  STATE_BUCKET_URI: s3://oncarbon.app-serverless-state/staging/.serverless
+
+jobs:
+  tags:
+    name: Test
+    runs-on: ubuntu-latest
+    steps:
+      - name: ⬇️ Checkout repo
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      - name: ⎔ Setup node.js
+        uses: actions/setup-node@v2.4.1
+        with:
+          node-version: "16.x"
+
+      - name: 📜 List commits since last deploy
+        run: |
+          echo "ref: ${{ github.event.push.ref }}"
+          echo "before: ${{ github.event.push.before }}"
+          echo "after: ${{ github.event.push.after }}"
+          echo "created: ${{ github.event.push.created }}"
+          echo "deleted: ${{ github.event.push.deleted }}"
+          echo "forced: ${{ github.event.push.forced }}"
+          echo "head_commit: ${{ github.event.push.head_commit }}"
+          echo "compare: ${{ github.event.push.compare }}"
+          echo "commits: ${{ github.event.push.commits }}"
