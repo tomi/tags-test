@@ -6,12 +6,11 @@ env:
 
 on:
   push:
-    tags: ["prod"]
   workflow_dispatch:
 
 jobs:
-  tags:
-    name: Test
+  lols:
+    name: Test changes
     runs-on: ubuntu-latest
     steps:
       - name: ⬇️ Checkout repo
@@ -19,35 +18,54 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: ⎔ Setup node.js
-        uses: actions/setup-node@v2.4.1
-        with:
-          node-version: "16.x"
+      - name: Get changed files using defaults
+        id: changed-files
+        uses: tj-actions/changed-files@v16
 
-      - name: 📩 Install dependencies
-        uses: bahmutov/npm-install@v1
-
-      - name: 📜 List commits since last deploy
+      - name: List all added files
         run: |
-          echo "GIT_CHANGES<<EOF" >> $GITHUB_ENV
-          npx git-changelog-generator-for-slack --user="tomi" --repo="tags-test" --header="${{ env.SLACK_MSG_HEADER }}" --preCommitsMsg="${{ env.SLACK_MSG_PRECOMMITS }}" 1ca6ce239b9aead9a00df0b6022ce0576cb7b7a4 HEAD >> $GITHUB_ENV
-          echo "EOF" >> $GITHUB_ENV
+          for file in ${{ steps.changed-files.outputs.all_changed_files }}; do
+            echo "$file was added"
+          done
 
-      # - name: 📜 List commits since last deploy
-      #   if: ${{ github.event.before != '0000000000000000000000000000000000000000' && github.event.before != ''}}
-      #   # TODO: Figure out why this fails with "Invalid revision range"
-      #   run: echo 'GIT_CHANGES="Changes not available"' >> $GITHUB_ENV
-      # run: |
-      #   echo "GIT_CHANGES<<EOF" >> $GITHUB_ENV
-      #   git log --date=iso-strict --pretty=tformat:'%h %an (%ad):%n%B' ${{ github.event.before }}..${{ github.event.after }} >> $GITHUB_ENV
-      #   echo "EOF" >> $GITHUB_ENV
+  # tags:
+  #   name: Test
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: ⬇️ Checkout repo
+  #       uses: actions/checkout@v2
+  #       with:
+  #         fetch-depth: 0
 
-      - name: Debug message
-        run: echo '${{ env.GIT_CHANGES }}'
+  #     - name: ⎔ Setup node.js
+  #       uses: actions/setup-node@v2.4.1
+  #       with:
+  #         node-version: "16.x"
 
-      - uses: ./.github/workflows/actions/slack
-        with:
-          channel-id: ${{ secrets.CHANNEL_ID }} # '#feed' channel
-          payload: ${{ env.GIT_CHANGES }}
-        env:
-          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+  #     - name: 📩 Install dependencies
+  #       uses: bahmutov/npm-install@v1
+
+  #     - name: 📜 List commits since last deploy
+  #       run: |
+  #         echo "GIT_CHANGES<<EOF" >> $GITHUB_ENV
+  #         npx git-changelog-generator-for-slack --user="tomi" --repo="tags-test" --header="${{ env.SLACK_MSG_HEADER }}" --preCommitsMsg="${{ env.SLACK_MSG_PRECOMMITS }}" 1ca6ce239b9aead9a00df0b6022ce0576cb7b7a4 HEAD >> $GITHUB_ENV
+  #         echo "EOF" >> $GITHUB_ENV
+
+  #     # - name: 📜 List commits since last deploy
+  #     #   if: ${{ github.event.before != '0000000000000000000000000000000000000000' && github.event.before != ''}}
+  #     #   # TODO: Figure out why this fails with "Invalid revision range"
+  #     #   run: echo 'GIT_CHANGES="Changes not available"' >> $GITHUB_ENV
+  #     # run: |
+  #     #   echo "GIT_CHANGES<<EOF" >> $GITHUB_ENV
+  #     #   git log --date=iso-strict --pretty=tformat:'%h %an (%ad):%n%B' ${{ github.event.before }}..${{ github.event.after }} >> $GITHUB_ENV
+  #     #   echo "EOF" >> $GITHUB_ENV
+
+  #     - name: Debug message
+  #       run: echo '${{ env.GIT_CHANGES }}'
+
+  #     - uses: ./.github/workflows/actions/slack
+  #       with:
+  #         channel-id: ${{ secrets.CHANNEL_ID }} # '#feed' channel
+  #         payload: ${{ env.GIT_CHANGES }}
+  #       env:
+  #         SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
